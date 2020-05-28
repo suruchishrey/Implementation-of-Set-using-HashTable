@@ -111,7 +111,7 @@ class HashTable{
         if(index!=NULL)
         {
             
-            while(ptr->Next!=NULL && flag==0)
+            while(ptr!=NULL && flag==0)
             {
                 if(ptr->data.compare(s)==0)             //if the element is already there then dont add it
                 {
@@ -161,7 +161,7 @@ class HashTable{
         if(index!=NULL)
         {
             
-            while((ptr->Next!=NULL || ptr==index) && flag==0 )
+            while((ptr!=NULL) && flag==0 )
             {
                 
                 if(ptr->data.compare(s)==0)
@@ -171,6 +171,9 @@ class HashTable{
                     if(prev!=ptr)
                     {
                         prev->Next=ptr->Next;
+                    }
+                    else{
+                        HashTableData[key]=NULL;
                     }
                     delete ptr;
 
@@ -207,7 +210,7 @@ class HashTable{
         if(index!=NULL)
         {
             
-            while(ptr->Next!=NULL && flag==0)
+            while(ptr!=NULL && flag==0)
             {
                 if(ptr->data.compare(s)==0)
                 {
@@ -439,29 +442,73 @@ bool Subset(Set U,Set V)                //returns true if U is a subset of V
 
 int main()
 {
-    
-    string str="GEEks";
-    Set S,T;
-    //Set T;
-    S.add(str);
-    S.add("Suruchi");
-    T.add("Suruchi");
-    T.add("Shrey");
-    S.printSet();
-    T.printSet();
-    Set *uresptr;
-    Set ires,diffres;
-    //uresptr=&ures;
-    Set ures;
-    ures=Union(S,T);
-    ures.printSet();
-    ires=Intersection(S,T);
-    ires.printSet();
-    diffres=Difference(S,T);
-    diffres.printSet();
-    if(Subset(S,T)){cout<<"True!!"<<endl;}
-    else{
-        cout<<"false!!"<<endl;
+    Set U,V;
+    Set Result;
+    cout<<"This program will show operaion on two sets(of Strings)"<<endl;
+    cout<<"Enter set 1 elements:"<<endl;
+    string str;
+    int enter=1;
+    while(enter==1)
+    {
+        cin>>str;
+        U.add(str);
+        cout<<"\nWant to enter more?(0 for NO and 1 for YES)"<<endl;
+        cin>>enter;
+    }
+    cout<<"Enter set 2 elements:"<<endl;
+    enter =1;
+    while(enter==1)
+    {
+        cin>>str;
+        V.add(str);
+        cout<<"\nWant to enter more?(0 for NO and 1 for YES)"<<endl;
+        cin>>enter;
+    }
+    cout<<"The entered elements are:"<<endl;
+    cout<<"Set 1:"<<endl;
+    U.printSet();
+    cout<<"Set 2:"<<endl;
+    V.printSet();
+    cout<<"Operations:"<<endl;
+    cout<<"1)Union\n2)Intersection\n3)Difference\n4)Subset\n5)Remove an element\nEnter which operation would you like to perform?"<<endl;
+    cin>>enter;
+    switch (enter)
+    {
+    case 1:
+        Result=Union(U,V);
+        cout<<"\nUnion:"<<endl;
+        Result.printSet();
+        break;
+    case 2:
+        Result=Intersection(U,V);
+        cout<<"\nIntersection:"<<endl;
+        Result.printSet();
+        break;
+    case 3:
+        Result=Difference(U,V);
+        cout<<"\nDifference:"<<endl;
+        Result.printSet();
+        break;
+    case 4:
+        bool result;
+        result=Subset(U,V);
+        if(result)cout<<"\nU is a subset of V"<<endl;
+        else cout<<"U is not a subset of V."<<endl;
+        break;
+    case 5:
+        cout<<endl;
+        cout<<"Set 1:"<<endl;
+        U.printSet();
+        cout<<"Set 2:"<<endl;
+        V.printSet();
+        cout<<"Enter the element which you want to delete:"<<endl;
+        cin>>str;
+        U.remove(str);
+        V.remove(str);
+        break;
+    default:
+    cout<<"Invalid Input!"<<endl;
+        break;
     }
     return 0;
 }
