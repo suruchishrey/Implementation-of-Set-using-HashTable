@@ -70,6 +70,17 @@ class HashTable{
     // destructor 
     ~HashTable() 
     { 
+        HashNode*ptr,*temp;
+        for(int i=0;i<MAXSIZE;++i)
+        {
+            ptr=HashTableData[i];
+            while(ptr!=NULL)
+            {
+                temp=ptr;
+                ptr=ptr->Next;
+                delete temp;
+            }
+        }
         delete[] HashTableData; 
     } 
 
@@ -102,13 +113,14 @@ class HashTable{
 
     bool hash_add(datatype s)
     {
-        int key=hashfunc(s);
+        int key=hashfunc(s);                    //calculate the key from hash function 
         //cout<<"data="<<s<<" key="<<key<<endl;
         int flag=0;
         bool retval=true;
         HashNode*index=HashTableData[key];
         HashNode*ptr=index;
-        if(index!=NULL)
+        HashNode*prev=ptr;
+        if(index!=NULL)                         //see if there is a collision 
         {
             
             while(ptr!=NULL && flag==0)
@@ -119,25 +131,26 @@ class HashTable{
                     flag=1;
                 }
                 else{
-                    ptr=ptr->Next;
+                    prev=ptr;
+                    ptr=ptr->Next;                      //else go to the last node in that list
                 }
             }
-            if(flag==0)
+            if(flag==0)                                 //if there's a collision and the element doesnot exist already 
             {
-                HashNode*newNode=MakeNode(s);
-                ptr->Next=newNode;
+                HashNode*newNode=MakeNode(s);           //then make a new node for that data 
+                prev->Next=newNode;                     //insert the new node at the last of the list
                 retval=true;
                 size++;
-                if(key<firstIndex)
+                if(key<firstIndex)                      //update the firstIndex and firstString (for traversing hashtable)
                 {
                     firstIndex=key;
                     firstString=s;
                 }
             }
         }
-        else{
+        else{                                           //if there is no collision make a new node for given data
             HashNode*newNode=MakeNode(s);
-                HashTableData[key]=newNode;
+                HashTableData[key]=newNode;             //Insert the node at that index
                 retval=true;
                 size++;
                 if(key<firstIndex)
@@ -149,16 +162,16 @@ class HashTable{
         return retval;
     } 
 
-    bool hash_remove(datatype s) 
+    bool hash_remove(datatype s)                
     {
-        int key=hashfunc(s);
+        int key=hashfunc(s);                        //calculate the key(location)
         int flag=0;
         int flag1=0;
         bool retval=false;
         HashNode*index=HashTableData[key];
         HashNode*ptr=index;
         HashNode*prev=index;
-        if(index!=NULL)
+        if(index!=NULL)                             //if that element is there in the hash table
         {
             
             while((ptr!=NULL) && flag==0 )
@@ -173,7 +186,7 @@ class HashTable{
                         prev->Next=ptr->Next;
                     }
                     else{
-                        HashTableData[key]=NULL;
+                        HashTableData[key]=ptr->Next;
                     }
                     delete ptr;
 
@@ -296,7 +309,7 @@ class Set{
         sizeSet=S.sizeSet;
     }
 
-    bool is_element_of(datatype s)
+    bool is_element_of(datatype s)          //checks if s is element of the set or not
     {
         bool retval=false;
         if(hash.hash_search(s))
@@ -444,10 +457,10 @@ int main()
 {
     Set U,V;
     Set Result;
-    cout<<"This program will show operaion on two sets(of Strings)"<<endl;
+    cout<<"This program will show operation on two sets(of Strings)"<<endl;
     cout<<"Enter set 1 elements:"<<endl;
     string str;
-    int enter=1;
+    int enter=1,choice;
     while(enter==1)
     {
         cin>>str;
@@ -469,46 +482,65 @@ int main()
     U.printSet();
     cout<<"Set 2:"<<endl;
     V.printSet();
-    cout<<"Operations:"<<endl;
-    cout<<"1)Union\n2)Intersection\n3)Difference\n4)Subset\n5)Remove an element\nEnter which operation would you like to perform?"<<endl;
-    cin>>enter;
-    switch (enter)
-    {
-    case 1:
-        Result=Union(U,V);
-        cout<<"\nUnion:"<<endl;
-        Result.printSet();
-        break;
-    case 2:
-        Result=Intersection(U,V);
-        cout<<"\nIntersection:"<<endl;
-        Result.printSet();
-        break;
-    case 3:
-        Result=Difference(U,V);
-        cout<<"\nDifference:"<<endl;
-        Result.printSet();
-        break;
-    case 4:
-        bool result;
-        result=Subset(U,V);
-        if(result)cout<<"\nU is a subset of V"<<endl;
-        else cout<<"U is not a subset of V."<<endl;
-        break;
-    case 5:
-        cout<<endl;
-        cout<<"Set 1:"<<endl;
-        U.printSet();
-        cout<<"Set 2:"<<endl;
-        V.printSet();
-        cout<<"Enter the element which you want to delete:"<<endl;
-        cin>>str;
-        U.remove(str);
-        V.remove(str);
-        break;
-    default:
-    cout<<"Invalid Input!"<<endl;
-        break;
-    }
+    do{
+        cout<<"Operations:"<<endl;
+        cout<<"1)Union\n2)Intersection\n3)Difference\n4)Subset\n5)Remove an element\n6)Show the set Elements\nEnter which operation would you like to perform?"<<endl;
+    
+        cin>>enter;
+        switch (enter)
+        {
+        case 1:
+            Result=Union(U,V);
+            cout<<"\nUnion:"<<endl;
+            Result.printSet();
+            break;
+        case 2:
+            Result=Intersection(U,V);
+            cout<<"\nIntersection:"<<endl;
+            Result.printSet();
+            break;
+        case 3:
+            Result=Difference(U,V);
+            cout<<"\nDifference:"<<endl;
+            Result.printSet();
+            break;
+        case 4:
+            bool result;
+            result=Subset(U,V);
+            if(result)cout<<"\nU is a subset of V"<<endl;
+            else cout<<"U is not a subset of V."<<endl;
+            break;
+        case 5:
+            cout<<endl;
+            cout<<"Set 1:"<<endl;
+            U.printSet();
+            cout<<"Set 2:"<<endl;
+            V.printSet();
+            cout<<"Enter the element which you want to delete:"<<endl;
+            cin>>str;
+            cout<<"Enter the set(1 or 2)from which you want to delete the element?"<<endl;
+            cin>>choice;
+            cout<<"Deleting the element from the set"<<endl;
+            if(choice==1)U.remove(str);
+            else if(choice==2)V.remove(str);
+            cout<<"Set 1 is"<<endl;
+            U.printSet();
+            cout<<"Set 2 is"<<endl;
+            V.printSet();
+            break;
+        case 6:
+            cout<<"Set 1:"<<endl;
+            U.printSet();
+            cout<<"Set 2:"<<endl;
+            V.printSet();
+            break;
+        default:
+        cout<<"Invalid Input!"<<endl;
+            break;
+        }
+        cout<<"\nWant to some more operations?(1 for yes and 0 for no)";
+        cin>>enter;
+    }while (enter);
+    
     return 0;
 }
